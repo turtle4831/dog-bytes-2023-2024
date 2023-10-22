@@ -55,6 +55,15 @@ public class UltraBadlyMadTele extends LinearOpMode {
             HangerLeft.setPower(trigger);
             HangerRight.setPower(trigger);
 
+                if(gamepad1.a){
+                    gamepad1.left_trigger = 0;
+                    gamepad1.right_trigger = 0;
+                    HangerLeft.setPower(0.4):
+                    HangerRight.setPower(0.4);
+                    sleep(50000);
+                }
+
+
 
             telemetry.addData("FL_Motor Current Power", "%.2f", FLPower);
             telemetry.addData("FR_Motor Current Power", "%.2f", FRPower);
