@@ -1,0 +1,89 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@Autonomous(name = "Self-Movement")
+public class AutoDel extends LinearOpMode{
+    public DcMotor FL_Motor;
+    public DcMotor FR_Motor;
+    public DcMotor BL_Motor;
+    public DcMotor BR_Motor;
+    public ElapsedTime runtime = new ElapsedTime();
+
+
+    static final double COUNTS_PER_MOTOR_REV = 1440 ; // eg: TETRIX motor encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.0 ; // ENTERNAL gearing
+    static final double WHEEL_DIAMTER_INCHES = 3.0 ; // CIRCUMFERENCE OF THE WHEEL
+    static final double COUNT_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMTER_INCHES * 3.1415);
+    static final double DRIVE_SPEED = 0.6 ;
+    static final double TURN_SPEED = 1.0 ;
+    static final double LATERAL_SPEED = 1.0 ;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        FL_Motor = hardwareMap.get(DcMotor.class,"FL_Motor");
+        FR_Motor = hardwareMap.get(DcMotor.class,"FR_Motor");
+        BL_Motor = hardwareMap.get(DcMotor.class,"BL_Motor");
+        BR_Motor = hardwareMap.get(DcMotor.class,"BR_Motor");
+
+        //sets motors to move in other ways to contribute to the face of the robot
+        FL_Motor.setDirection(DcMotor.Direction.REVERSE);
+        BL_Motor.setDirection(DcMotor.Direction.FORWARD);
+
+        // RESETING MOTORS TO ZERO POSITION
+        FL_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Run using encoder
+        FL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("start to move","%7d : %7d",
+                FL_Motor.getCurrentPosition(),
+                FR_Motor.getCurrentPosition(),
+                BL_Motor.getCurrentPosition(),
+                BR_Motor.getCurrentPosition());
+        telemetry.update();
+
+        waitForStart();
+
+
+        encoderDrive(DRIVE_SPEED, 49, 48, 5.0 );
+        encoderDrive(TURN_SPEED, 47, 86, 4.3);
+        encoderDrive(DRIVE_SPEED, -46, -76, 6.3 );
+
+        telemetry.addData("path", "Complete");
+        telemetry.update();
+        sleep(1000);
+
+
+
+
+    }
+
+    private void encoderDrive(double speed, double leftinches, double rightinches,
+    double timeoutS) {
+
+        int newLeftTarget;
+        int newRightTarget;
+
+
+        if(opModeIsActive()){
+            newLeftTarget = FL_Motor.getCurrentPosition() + (int)(leftinches * COUNT_PER_INCH);
+            newRightTarget = FR_Motor.getCurrentPosition() + (int)(rightinches * COUNT_PER_INCH);
+            FL_Motor.setTargetPosition(newLeftTarget);
+            FR_Motor.setTargetPosition(newRightTarget);
+
+
+
+        }
+    }
+}
