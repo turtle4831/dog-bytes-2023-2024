@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
@@ -22,7 +23,7 @@ public class SankOjibwa extends LinearOpMode {
     public ElapsedTime runtime = new ElapsedTime();
 
 
-    public void encoderdrive(double speed, double leftInches, double rightInches, double timeoutS){
+    public void encoderdrive (double speed, double leftInches, double rightInches, double timeoutS){
         int newFrontleft;
         int newBottomLeft;
         int newFrontright;
@@ -44,6 +45,34 @@ public class SankOjibwa extends LinearOpMode {
             BR_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             runtime.reset();
+            FL_Motor.setPower(Math.abs(speed));
+            FR_Motor.setPower(Math.abs(speed));
+            BL_Motor.setPower(Math.abs(speed));
+            BR_Motor.setPower(Math.abs(speed));
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (FL_Motor.isBusy() && FR_Motor.isBusy() && BL_Motor.isBusy() && BR_Motor.isBusy())){
+
+                telemetry.addData("Running To","%7d :%7d", newFrontleft, newFrontright, newBottomLeft, newBottomRight);
+                telemetry.addData("Currentlyn at", "at %7d :%7d", FL_Motor.getCurrentPosition(),FR_Motor.getCurrentPosition(),
+                        BL_Motor.getCurrentPosition(),BR_Motor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            FL_Motor.setPower(0);
+            FR_Motor.setPower(0);
+            BL_Motor.setPower(0);
+            BR_Motor.setPower(0);
+
+            FL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(250);
+
+
         }
 
     }
@@ -55,5 +84,40 @@ public class SankOjibwa extends LinearOpMode {
         FR_Motor = hardwareMap.get(DcMotor.class,"FR_Motor");
         BL_Motor = hardwareMap.get(DcMotor.class,"BL_Motor");
         BR_Motor = hardwareMap.get(DcMotor.class,"BR_Motor");
+
+        FL_Motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL_Motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR_Motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR_Motor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+
+        FL_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        FL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("Starting at","%7d :%7d", FL_Motor.getCurrentPosition(),FR_Motor.getCurrentPosition(),
+                BL_Motor.getCurrentPosition(),
+        BR_Motor.getCurrentPosition());
+
+        telemetry.update();
+
+        waitForStart();
+
+        encoderdrive(DRIVE_SPEED, 48, 48, 3.0);
+        encoderdrive(TURN_SPEED,48,48,4.0);
+        encoderdrive(DRIVE_SPEED,48,48,4.0);
+        telemetry.addData("Path","Complete");
+        telemetry.update();
+        sleep(2500);
+
+
+
+
     }
 }
